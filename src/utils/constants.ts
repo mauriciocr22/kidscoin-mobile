@@ -4,7 +4,7 @@
 
 // URL da API
 export const API_URL = __DEV__
-  ? 'http://localhost:8080/api'
+  ? 'http://192.168.1.34:8080/api'
   : 'https://seu-app.up.railway.app/api';
 
 // Chaves do AsyncStorage
