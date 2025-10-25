@@ -18,6 +18,7 @@ import { COLORS } from '../../utils/constants';
 
 const ManageChildrenScreen: React.FC = () => {
   const [fullName, setFullName] = useState('');
+  const [username, setUsername] = useState('');
   const [age, setAge] = useState('');
   const [pin, setPin] = useState('');
   const [loading, setLoading] = useState(false);
@@ -25,7 +26,6 @@ const ManageChildrenScreen: React.FC = () => {
   const [children, setChildren] = useState<User[]>([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [createdChildEmail, setCreatedChildEmail] = useState('');
 
   // Carregar lista de crianças ao montar componente
   useEffect(() => {
@@ -53,6 +53,21 @@ const ManageChildrenScreen: React.FC = () => {
   const validateForm = (): boolean => {
     if (!fullName.trim()) {
       setError('Preencha o nome da criança');
+      return false;
+    }
+
+    if (!username.trim()) {
+      setError('Preencha o username');
+      return false;
+    }
+
+    if (username.length < 3) {
+      setError('Username deve ter pelo menos 3 caracteres');
+      return false;
+    }
+
+    if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
+      setError('Username pode conter apenas letras, números, - e _');
       return false;
     }
 
@@ -101,17 +116,18 @@ const ManageChildrenScreen: React.FC = () => {
     try {
       const newChild = await userService.createChild({
         fullName: fullName.trim(),
+        username: username.trim(),
         age: parseInt(age),
         pin: pin.trim(),
       });
 
-      setCreatedChildEmail(newChild.email);
       setSuccess(
-        `${newChild.fullName} foi criado(a)! Email: ${newChild.email}`
+        `${newChild.fullName} foi criado(a)! Use "${username}" para fazer login.`
       );
 
       // Limpar formulário
       setFullName('');
+      setUsername('');
       setAge('');
       setPin('');
 
@@ -147,6 +163,17 @@ const ManageChildrenScreen: React.FC = () => {
             />
 
             <TextInput
+              label="Username"
+              value={username}
+              onChangeText={(text) => setUsername(text.toLowerCase())}
+              mode="outlined"
+              autoCapitalize="none"
+              style={styles.input}
+              left={<TextInput.Icon icon="at" />}
+              placeholder="Ex: joao_silva"
+            />
+
+            <TextInput
               label="Idade (6-14 anos)"
               value={age}
               onChangeText={setAge}
@@ -172,10 +199,7 @@ const ManageChildrenScreen: React.FC = () => {
             />
 
             <Text style={styles.helperText}>
-              ℹ️ O email será gerado automaticamente baseado no nome
-            </Text>
-            <Text style={styles.helperText}>
-              💡 A criança usará o email gerado e o PIN para fazer login
+              💡 A criança usará o username e o PIN para fazer login
             </Text>
 
             <Button

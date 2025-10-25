@@ -21,8 +21,10 @@ export interface RegisterData {
 }
 
 export interface LoginData {
-  email: string;
-  password: string;
+  email?: string;
+  username?: string;
+  password?: string;
+  pin?: string;
 }
 
 export interface AuthResponse {
@@ -35,6 +37,7 @@ export interface AuthResponse {
 
 export interface CreateChildData {
   fullName: string;
+  username: string;
   age: number;
   pin: string;
   avatarUrl?: string;

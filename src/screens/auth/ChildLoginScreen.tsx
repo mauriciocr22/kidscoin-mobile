@@ -24,13 +24,13 @@ const ChildLoginScreen: React.FC = () => {
   const navigation = useNavigation();
   const { signIn } = useAuth();
 
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [pin, setPin] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleLogin = async () => {
-    if (!email || !pin) {
+    if (!username || !pin) {
       setError('Preencha todos os campos');
       return;
     }
@@ -44,7 +44,7 @@ const ChildLoginScreen: React.FC = () => {
     setError('');
 
     try {
-      await signIn({ email, password: pin });
+      await signIn({ username, pin });
     } catch (err: any) {
       setError(err.message || 'Erro ao fazer login');
     } finally {
@@ -64,22 +64,21 @@ const ChildLoginScreen: React.FC = () => {
         <View style={styles.header}>
           <Text style={styles.logo}>🎮</Text>
           <Text style={styles.title}>Olá, Criança!</Text>
-          <Text style={styles.subtitle}>Digite seu email e PIN para entrar</Text>
+          <Text style={styles.subtitle}>Digite seu username e PIN para entrar</Text>
         </View>
 
         <Surface style={styles.card} elevation={4}>
           <TextInput
-            label="Seu email"
-            value={email}
-            onChangeText={setEmail}
+            label="Username"
+            value={username}
+            onChangeText={(text) => setUsername(text.toLowerCase())}
             mode="outlined"
-            keyboardType="email-address"
             autoCapitalize="none"
             style={styles.input}
-            left={<TextInput.Icon icon="email" />}
+            left={<TextInput.Icon icon="at" />}
             outlineColor={COLORS.child.primary}
             activeOutlineColor={COLORS.child.primary}
-            placeholder="seu.email@child.local"
+            placeholder="joao_silva"
           />
 
           <TextInput
