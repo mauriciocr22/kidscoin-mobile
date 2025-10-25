@@ -36,6 +36,7 @@ export interface AuthResponse {
 export interface CreateChildData {
   fullName: string;
   email: string;
+  age: number;
   pin: string;
   avatarUrl?: string;
 }

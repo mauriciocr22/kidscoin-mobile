@@ -19,6 +19,7 @@ import { COLORS } from '../../utils/constants';
 const ManageChildrenScreen: React.FC = () => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
+  const [age, setAge] = useState('');
   const [pin, setPin] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingChildren, setLoadingChildren] = useState(false);
@@ -65,6 +66,17 @@ const ManageChildrenScreen: React.FC = () => {
       return false;
     }
 
+    if (!age.trim()) {
+      setError('Preencha a idade');
+      return false;
+    }
+
+    const ageNum = parseInt(age);
+    if (isNaN(ageNum) || ageNum < 6 || ageNum > 14) {
+      setError('Idade deve estar entre 6 e 14 anos');
+      return false;
+    }
+
     if (!pin.trim()) {
       setError('Preencha o PIN');
       return false;
@@ -100,6 +112,7 @@ const ManageChildrenScreen: React.FC = () => {
       const newChild = await userService.createChild({
         fullName: fullName.trim(),
         email: email.trim().toLowerCase(),
+        age: parseInt(age),
         pin: pin.trim(),
       });
 
@@ -108,6 +121,7 @@ const ManageChildrenScreen: React.FC = () => {
       // Limpar formulário
       setFullName('');
       setEmail('');
+      setAge('');
       setPin('');
 
       // Recarregar lista
@@ -151,6 +165,18 @@ const ManageChildrenScreen: React.FC = () => {
               style={styles.input}
               left={<TextInput.Icon icon="email" />}
               placeholder="Ex: joao@crianca.com"
+            />
+
+            <TextInput
+              label="Idade (6-14 anos)"
+              value={age}
+              onChangeText={setAge}
+              mode="outlined"
+              keyboardType="numeric"
+              maxLength={2}
+              style={styles.input}
+              left={<TextInput.Icon icon="calendar" />}
+              placeholder="Ex: 10"
             />
 
             <TextInput
