@@ -18,7 +18,6 @@ import { COLORS } from '../../utils/constants';
 
 const ManageChildrenScreen: React.FC = () => {
   const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
   const [age, setAge] = useState('');
   const [pin, setPin] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,6 +25,7 @@ const ManageChildrenScreen: React.FC = () => {
   const [children, setChildren] = useState<User[]>([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [createdChildEmail, setCreatedChildEmail] = useState('');
 
   // Carregar lista de crianças ao montar componente
   useEffect(() => {
@@ -53,16 +53,6 @@ const ManageChildrenScreen: React.FC = () => {
   const validateForm = (): boolean => {
     if (!fullName.trim()) {
       setError('Preencha o nome da criança');
-      return false;
-    }
-
-    if (!email.trim()) {
-      setError('Preencha o email');
-      return false;
-    }
-
-    if (!email.includes('@')) {
-      setError('Email inválido');
       return false;
     }
 
@@ -111,16 +101,17 @@ const ManageChildrenScreen: React.FC = () => {
     try {
       const newChild = await userService.createChild({
         fullName: fullName.trim(),
-        email: email.trim().toLowerCase(),
         age: parseInt(age),
         pin: pin.trim(),
       });
 
-      setSuccess(`${newChild.fullName} foi criado(a) com sucesso!`);
+      setCreatedChildEmail(newChild.email);
+      setSuccess(
+        `${newChild.fullName} foi criado(a)! Email: ${newChild.email}`
+      );
 
       // Limpar formulário
       setFullName('');
-      setEmail('');
       setAge('');
       setPin('');
 
@@ -156,18 +147,6 @@ const ManageChildrenScreen: React.FC = () => {
             />
 
             <TextInput
-              label="Email"
-              value={email}
-              onChangeText={setEmail}
-              mode="outlined"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              style={styles.input}
-              left={<TextInput.Icon icon="email" />}
-              placeholder="Ex: joao@crianca.com"
-            />
-
-            <TextInput
               label="Idade (6-14 anos)"
               value={age}
               onChangeText={setAge}
@@ -193,7 +172,10 @@ const ManageChildrenScreen: React.FC = () => {
             />
 
             <Text style={styles.helperText}>
-              💡 A criança usará o email e PIN para fazer login
+              ℹ️ O email será gerado automaticamente baseado no nome
+            </Text>
+            <Text style={styles.helperText}>
+              💡 A criança usará o email gerado e o PIN para fazer login
             </Text>
 
             <Button
