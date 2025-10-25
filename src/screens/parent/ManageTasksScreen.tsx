@@ -303,8 +303,14 @@ const ManageTasksScreen: React.FC = () => {
                     key={cat.value}
                     selected={category === cat.value}
                     onPress={() => setCategory(cat.value)}
-                    style={styles.chip}
+                    style={[
+                      styles.chip,
+                      category === cat.value && styles.chipSelected,
+                    ]}
+                    selectedColor={COLORS.common.white}
                     icon={cat.icon}
+                    mode={category === cat.value ? 'flat' : 'outlined'}
+                    textStyle={category === cat.value && styles.chipTextSelected}
                   >
                     {cat.label}
                   </Chip>
@@ -319,17 +325,26 @@ const ManageTasksScreen: React.FC = () => {
               </Text>
             ) : (
               <View style={styles.childrenList}>
-                {children.map((child) => (
-                  <Chip
-                    key={child.id}
-                    selected={selectedChildren.includes(child.id)}
-                    onPress={() => toggleChild(child.id)}
-                    style={styles.childChip}
-                    icon="account"
-                  >
-                    {child.fullName}
-                  </Chip>
-                ))}
+                {children.map((child) => {
+                  const isSelected = selectedChildren.includes(child.id);
+                  return (
+                    <Chip
+                      key={child.id}
+                      selected={isSelected}
+                      onPress={() => toggleChild(child.id)}
+                      style={[
+                        styles.childChip,
+                        isSelected && styles.chipSelected,
+                      ]}
+                      selectedColor={COLORS.common.white}
+                      icon="account"
+                      mode={isSelected ? 'flat' : 'outlined'}
+                      textStyle={isSelected && styles.chipTextSelected}
+                    >
+                      {child.fullName}
+                    </Chip>
+                  );
+                })}
               </View>
             )}
 
@@ -524,6 +539,13 @@ const styles = StyleSheet.create({
   },
   chip: {
     marginRight: 8,
+  },
+  chipSelected: {
+    backgroundColor: COLORS.parent.primary,
+  },
+  chipTextSelected: {
+    color: COLORS.common.white,
+    fontWeight: '600',
   },
   childrenList: {
     flexDirection: 'row',
