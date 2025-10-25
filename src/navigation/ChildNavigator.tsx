@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ChildDashboardScreen from '../screens/child/ChildDashboardScreen';
 import TasksListScreen from '../screens/child/TasksListScreen';
 import RewardsShopScreen from '../screens/child/RewardsShopScreen';
