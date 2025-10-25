@@ -47,7 +47,7 @@ const LoginScreen: React.FC = () => {
     setError('');
 
     try {
-      await signIn({ email, password });
+      await signIn({ emailOrUsername: email, password });
     } catch (err: any) {
       setError(err.message || 'Erro ao fazer login');
     } finally {

@@ -44,7 +44,7 @@ const ChildLoginScreen: React.FC = () => {
     setError('');
 
     try {
-      await signIn({ username, pin });
+      await signIn({ emailOrUsername: username, password: pin });
     } catch (err: any) {
       setError(err.message || 'Erro ao fazer login');
     } finally {
