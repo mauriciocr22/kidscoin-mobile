@@ -742,7 +742,7 @@ const styles = StyleSheet.create({
   deleteButtonContainer: {
     position: 'absolute',
     bottom: -8,
-    left: -8,
+    right: -8,
   },
   deleteButton: {
     margin: 0,
