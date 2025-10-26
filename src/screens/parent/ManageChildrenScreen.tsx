@@ -39,6 +39,7 @@ const ManageChildrenScreen: React.FC = () => {
     setLoadingChildren(true);
     try {
       const data = await userService.getChildren();
+      console.log('👶 Crianças carregadas:', JSON.stringify(data, null, 2));
       setChildren(data);
     } catch (err: any) {
       console.error('Erro ao carregar crianças:', err);
@@ -231,7 +232,8 @@ const ManageChildrenScreen: React.FC = () => {
               <View>
                 {children.map((child, index) => {
                   // Extrair username do email se não vier do backend
-                  const username = child.username || child.email.split('@')[0];
+                  const username = child.username ||
+                    (child.email ? child.email.split('@')[0] : 'usuario');
 
                   return (
                     <React.Fragment key={child.id}>
