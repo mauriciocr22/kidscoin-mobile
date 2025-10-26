@@ -252,19 +252,24 @@ const ManageTasksScreen: React.FC = () => {
   };
 
   /**
-   * Ordenar tarefas - tarefas aguardando aprovação no topo
+   * Ordenar tarefas por prioridade de ação
+   * 1. COMPLETED (precisa aprovação) - TOPO
+   * 2. REJECTED (precisa refazer) - 2º
+   * 3. PENDING (aguardando fazer) - 3º
+   * 4. APPROVED (já concluída) - FINAL
    */
   const getSortedTasks = () => {
+    const priorityMap: { [key: string]: number } = {
+      COMPLETED: 1,  // Aguardando aprovação do pai
+      REJECTED: 2,   // Criança precisa refazer
+      PENDING: 3,    // Ainda não foi feita
+      APPROVED: 4,   // Já foi tratada
+    };
+
     return [...tasks].sort((a, b) => {
-      // Tarefas COMPLETED (aguardando aprovação) vêm primeiro
-      if (a.status === 'COMPLETED' && b.status !== 'COMPLETED') {
-        return -1;
-      }
-      if (a.status !== 'COMPLETED' && b.status === 'COMPLETED') {
-        return 1;
-      }
-      // Mantém ordem original para demais tarefas
-      return 0;
+      const priorityA = priorityMap[a.status] || 999;
+      const priorityB = priorityMap[b.status] || 999;
+      return priorityA - priorityB;
     });
   };
 
