@@ -79,6 +79,13 @@ class RewardService {
     );
     return response.data;
   }
+
+  /**
+   * Deletar recompensa (PARENT)
+   */
+  async deleteReward(rewardId: string): Promise<void> {
+    await api.delete(`/rewards/${rewardId}`);
+  }
 }
 
 export default new RewardService();

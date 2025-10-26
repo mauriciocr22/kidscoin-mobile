@@ -12,6 +12,9 @@ import {
   Snackbar,
   Switch,
   List,
+  IconButton,
+  Dialog,
+  Portal,
 } from 'react-native-paper';
 import { rewardService, getErrorMessage } from '../../services';
 import { Reward } from '../../types';
@@ -29,6 +32,10 @@ const CreateRewardScreen: React.FC = () => {
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  // Dialog de exclusão
+  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+  const [deletingReward, setDeletingReward] = useState<Reward | null>(null);
 
   useEffect(() => {
     loadRewards();
@@ -114,6 +121,33 @@ const CreateRewardScreen: React.FC = () => {
           ? `${reward.name} foi desativada`
           : `${reward.name} foi ativada`
       );
+      await loadRewards();
+    } catch (err: any) {
+      setError(getErrorMessage(err));
+    }
+  };
+
+  /**
+   * Abrir dialog de exclusão
+   */
+  const openDeleteDialog = (reward: Reward) => {
+    setDeletingReward(reward);
+    setDeleteDialogVisible(true);
+  };
+
+  /**
+   * Deletar recompensa
+   */
+  const handleDeleteReward = async () => {
+    if (!deletingReward) {
+      return;
+    }
+
+    try {
+      await rewardService.deleteReward(deletingReward.id);
+      setSuccess(`${deletingReward.name} foi excluída com sucesso.`);
+      setDeleteDialogVisible(false);
+      setDeletingReward(null);
       await loadRewards();
     } catch (err: any) {
       setError(getErrorMessage(err));
@@ -227,6 +261,12 @@ const CreateRewardScreen: React.FC = () => {
                             onValueChange={() => handleToggleReward(reward)}
                             color={COLORS.parent.primary}
                           />
+                          <IconButton
+                            icon="delete"
+                            iconColor={COLORS.common.error}
+                            size={20}
+                            onPress={() => openDeleteDialog(reward)}
+                          />
                         </View>
                       )}
                       titleStyle={[
@@ -243,6 +283,30 @@ const CreateRewardScreen: React.FC = () => {
           </Card.Content>
         </Card>
       </View>
+
+      {/* Dialog de exclusão */}
+      <Portal>
+        <Dialog visible={deleteDialogVisible} onDismiss={() => setDeleteDialogVisible(false)}>
+          <Dialog.Title>Excluir Recompensa</Dialog.Title>
+          <Dialog.Content>
+            <Text>
+              Tem certeza que deseja excluir a recompensa "{deletingReward?.name}"?
+            </Text>
+            <Text style={{ fontSize: 13, color: COLORS.common.textLight, marginTop: 10 }}>
+              Esta ação não pode ser desfeita.
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setDeleteDialogVisible(false)}>Cancelar</Button>
+            <Button
+              onPress={handleDeleteReward}
+              textColor={COLORS.common.error}
+            >
+              Excluir
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
 
       {/* Snackbars */}
       <Snackbar
