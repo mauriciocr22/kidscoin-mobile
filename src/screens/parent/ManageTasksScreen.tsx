@@ -251,6 +251,23 @@ const ManageTasksScreen: React.FC = () => {
     }
   };
 
+  /**
+   * Ordenar tarefas - tarefas aguardando aprovação no topo
+   */
+  const getSortedTasks = () => {
+    return [...tasks].sort((a, b) => {
+      // Tarefas COMPLETED (aguardando aprovação) vêm primeiro
+      if (a.status === 'COMPLETED' && b.status !== 'COMPLETED') {
+        return -1;
+      }
+      if (a.status !== 'COMPLETED' && b.status === 'COMPLETED') {
+        return 1;
+      }
+      // Mantém ordem original para demais tarefas
+      return 0;
+    });
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
@@ -386,7 +403,7 @@ const ManageTasksScreen: React.FC = () => {
               <Text style={styles.emptyText}>Nenhuma tarefa criada ainda.</Text>
             ) : (
               <View>
-                {tasks.map((assignment, index) => (
+                {getSortedTasks().map((assignment, index) => (
                   <React.Fragment key={assignment.id}>
                     <View style={styles.taskItem}>
                       <View style={styles.taskHeader}>
