@@ -1,21 +1,56 @@
 # 📊 PROGRESSO DO DESENVOLVIMENTO MOBILE - KidsCoins
 
 **Data:** 26 de Outubro de 2025
-**Status:** ✅ Sistema de tarefas completo com melhorias de UX
+**Status:** ✅ Sistema de recompensas completo + Exclusões implementadas
 
 ---
 
 ## 📝 RESUMO EXECUTIVO
 
-O aplicativo mobile foi desenvolvido do zero usando **React Native + Expo** com **TypeScript**. Toda a estrutura base está implementada, incluindo autenticação, navegação, integração com API backend, e **sistema completo de tarefas**.
+O aplicativo mobile foi desenvolvido do zero usando **React Native + Expo** com **TypeScript**. Toda a estrutura base está implementada, incluindo autenticação, navegação, integração com API backend, **sistema completo de tarefas e recompensas**.
 
-**Últimas melhorias:**
-- ✅ **Ordenação inteligente** - Tarefas priorizadas por status (aguardando > rejeitadas > pendentes > aprovadas)
-- ✅ **Exclusão de tarefas** - Botão de lixeira com confirmação
-- ✅ **Exclusão de crianças** - Com avisos fortes sobre dados que serão perdidos
-- ✅ **UX refinada** - Descrição em cards, alinhamentos, feedback visual
+**Últimas implementações:**
+- ✅ **CreateRewardScreen** - Pai cria e gerencia recompensas (ativar/desativar/excluir)
+- ✅ **RewardsShopScreen** - Loja infantil com saldo e validação de moedas
+- ✅ **Exclusão de recompensas** - Botão de lixeira com confirmação
+- ✅ **Sistema completo** - 12/14 telas funcionais
 
-**Resultado:** Sistema completo de gestão de tarefas e crianças com UX otimizada.
+**Resultado:** Sistema completo de tarefas e recompensas funcionando.
+
+---
+
+## 🚀 SESSÃO 4 - 26 DE OUTUBRO DE 2025 (Continuação)
+
+### 🎁 SISTEMA DE RECOMPENSAS IMPLEMENTADO
+
+#### CreateRewardScreen (Parent)
+- Formulário: nome, descrição, custo em moedas
+- Lista com switch ativar/desativar
+- Botão de excluir com confirmação
+- Recompensas inativas aparecem riscadas
+
+#### RewardsShopScreen (Child)
+- Card com saldo de moedas destacado
+- Lista de recompensas ativas apenas
+- Chip verde (pode comprar) / amarelo (não pode)
+- Botão bloqueado quando insuficiente
+- Mensagem motivacional ("falta X moedas")
+
+**Commits:**
+```
+1. feat: implementa tela de criar e gerenciar recompensas (Parent)
+2. feat: implementa tela da loja de recompensas (Child)
+3. feat: adiciona funcionalidade de excluir recompensa
+4. docs: incrementa PROGRESS.md (sessão 4)
+```
+
+### 📈 MÉTRICAS ATUALIZADAS
+
+- **Telas completas:** 12/14 (86%)
+  - **Parent:** Dashboard, ManageTasksScreen, ManageChildrenScreen, **CreateRewardScreen** ✅
+  - **Child:** Dashboard, ChildTasksScreen, **RewardsShopScreen** ✅, ProfileScreen (placeholder)
+- **Commits totais:** 40 commits
+- **Status:** ✅ **Falta apenas ProfileScreen para 100%**
 
 ---
 
