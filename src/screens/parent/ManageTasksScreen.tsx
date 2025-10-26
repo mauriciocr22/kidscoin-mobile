@@ -421,6 +421,12 @@ const ManageTasksScreen: React.FC = () => {
                         </Chip>
                       </View>
 
+                      {assignment.task.description && (
+                        <Text style={styles.taskDescription}>
+                          {assignment.task.description}
+                        </Text>
+                      )}
+
                       <Text style={styles.taskChild}>
                         👤 {assignment.childName}
                       </Text>
@@ -613,6 +619,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: COLORS.common.text,
     flex: 1,
+  },
+  taskDescription: {
+    fontSize: 14,
+    color: COLORS.common.textLight,
+    marginBottom: 8,
+    lineHeight: 20,
   },
   statusChip: {
     height: 28,
