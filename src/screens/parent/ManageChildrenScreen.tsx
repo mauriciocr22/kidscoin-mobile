@@ -232,8 +232,15 @@ const ManageChildrenScreen: React.FC = () => {
               <View>
                 {children.map((child, index) => {
                   // Extrair username do email se não vier do backend
-                  const username = child.username ||
-                    (child.email ? child.email.split('@')[0] : 'usuario');
+                  let username = 'sem-username';
+
+                  if (child.username) {
+                    // 1. Prioridade: username do backend
+                    username = child.username;
+                  } else if (child.email) {
+                    // 2. Extrai do email (ex: gustavo.rodrigues.xxx@child.local → gustavo.rodrigues.xxx)
+                    username = child.email.split('@')[0];
+                  }
 
                   return (
                     <React.Fragment key={child.id}>
