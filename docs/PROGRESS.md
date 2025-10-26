@@ -10,12 +10,12 @@
 O aplicativo mobile foi desenvolvido do zero usando **React Native + Expo** com **TypeScript**. Toda a estrutura base está implementada, incluindo autenticação, navegação, integração com API backend, e **sistema completo de tarefas**.
 
 **Últimas melhorias:**
-- ✅ **Priorização inteligente** - Tarefas aguardando aprovação no topo
-- ✅ **Alinhamento visual** - Status centralizado nos chips
-- ✅ **Mais informações** - Descrição da tarefa nos cards
-- ✅ **UX refinada** com feedback visual em chips e formulários
+- ✅ **Ordenação inteligente** - Tarefas priorizadas por status (aguardando > rejeitadas > pendentes > aprovadas)
+- ✅ **Exclusão de tarefas** - Botão de lixeira com confirmação
+- ✅ **Exclusão de crianças** - Com avisos fortes sobre dados que serão perdidos
+- ✅ **UX refinada** - Descrição em cards, alinhamentos, feedback visual
 
-**Resultado:** Sistema de tarefas funcional e otimizado para uso dos pais.
+**Resultado:** Sistema completo de gestão de tarefas e crianças com UX otimizada.
 
 ---
 
@@ -23,24 +23,89 @@ O aplicativo mobile foi desenvolvido do zero usando **React Native + Expo** com 
 
 ### ✨ MELHORIAS DE UX - TAREFAS (PARENT)
 
-**Problema:** Tarefas aguardando aprovação se perdiam na lista e informações importantes faltavam.
+#### 1. Ordenação Inteligente por Prioridade
 
-**Soluções:**
-1. ✅ **Ordenação inteligente** - Tarefas COMPLETED aparecem no topo
-2. ✅ **Alinhamento corrigido** - Texto do status centralizado no chip
-3. ✅ **Descrição visível** - Cards mostram descrição da tarefa
+**Problema:** Tarefas aguardando aprovação se perdiam na lista.
 
-**Commits:**
+**Solução:** Sistema de priorização automática:
+1. 🟣 **COMPLETED** (Aguardando Aprovação) - TOPO - Precisa ação do pai
+2. 🔴 **REJECTED** (Rejeitada) - 2º lugar - Criança precisa refazer
+3. 🟡 **PENDING** (Pendente) - 3º lugar - Aguardando criança
+4. 🟢 **APPROVED** (Aprovada) - FINAL - Já concluída
+
+**Benefícios:**
+- Tarefas aprovadas vão automaticamente para o final
+- Rejeitadas ficam visíveis para acompanhamento
+- Pai vê imediatamente o que precisa aprovar
+
+#### 2. Melhorias Visuais
+
+- ✅ **Alinhamento de status** - Texto centralizado nos chips
+- ✅ **Descrição da tarefa** - Exibida nos cards para mais contexto
+- ✅ **Layout compacto** - Informações organizadas
+
+#### 3. Exclusão de Tarefas
+
+**Funcionalidades:**
+- ✅ Botão de lixeira na mesma linha das moedas/XP (canto direito)
+- ✅ Dialog de confirmação antes de excluir
+- ✅ Mensagem clara: "Esta ação não pode ser desfeita"
+- ✅ Feedback com Snackbar de sucesso
+- ✅ Atualização automática da lista
+
+**Endpoint:** `DELETE /tasks/{assignmentId}`
+
+### 🗑️ EXCLUSÃO DE CRIANÇAS (PARENT)
+
+**Funcionalidades:**
+- ✅ Botão de lixeira em cada criança cadastrada
+- ✅ **Dialog com avisos FORTES** sobre ação irreversível
+- ✅ Lista detalhada de tudo que será excluído:
+  - Todas as tarefas atribuídas
+  - Saldo de moedas
+  - Poupança
+  - Badges e conquistas
+  - Histórico completo
+- ✅ Múltiplos avisos visuais em vermelho
+- ✅ Botão "Excluir Permanentemente" destacado
+
+**Endpoint:** `DELETE /api/users/children/{childId}`
+
+**Segurança:**
+- ⚠️ Título com emoji de alerta
+- ⚠️ Nome da criança destacado em azul
+- ⚠️ "ATENÇÃO: Esta é uma ação IRREVERSÍVEL!" em vermelho
+- ⚠️ Lista itemizada de dados que serão perdidos
+- ⚠️ Aviso final centralizado
+
+### 📊 COMMITS DA SESSÃO 3
+
 ```
 1. feat: prioriza tarefas aguardando aprovação no topo da lista
 2. fix: centraliza texto do status dentro do chip
 3. feat: exibe descrição da tarefa no card de tarefas atribuídas
+4. docs: atualiza PROGRESS.md com melhorias de UX da sessão 3
+5. feat: implementa ordenação inteligente de tarefas por prioridade
+6. feat: adiciona funcionalidade de excluir tarefa
+7. fix: ajusta posicionamento do botão de excluir para canto inferior esquerdo
+8. fix: corrige posicionamento do botão de excluir para canto inferior direito
+9. fix: posiciona botão de excluir na mesma linha das moedas e XP
+10. feat: adiciona funcionalidade de excluir criança
+11. docs: atualiza PROGRESS.md com todas as melhorias da sessão 3
 ```
 
-**Impacto:**
-- Pai identifica rapidamente o que precisa aprovar
-- Visual mais limpo e profissional
-- Mais contexto sobre cada tarefa
+**Total:** 11 commits
+
+### 📈 MÉTRICAS ATUALIZADAS
+
+- **Linhas de código:** ~5500+ linhas TypeScript
+- **Arquivos criados:** ~42 arquivos
+- **Telas funcionais:** 11 (10 completas, 1 placeholder)
+  - **Parent:** Dashboard ✅, ManageTasksScreen ✅, ManageChildrenScreen ✅, CreateRewardScreen (placeholder)
+  - **Child:** Dashboard ✅, ChildTasksScreen ✅, RewardsShopScreen (placeholder), ProfileScreen (placeholder)
+- **Services:** 7 services de API com novos métodos de exclusão
+- **Commits totais:** 36 commits
+- **Status:** ✅ **Sistema de gestão completo com exclusões e UX otimizada**
 
 ---
 
