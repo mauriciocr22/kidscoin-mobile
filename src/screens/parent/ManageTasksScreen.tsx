@@ -616,10 +616,14 @@ const styles = StyleSheet.create({
   },
   statusChip: {
     height: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   statusText: {
     fontSize: 12,
     color: COLORS.common.white,
+    lineHeight: 14,
+    marginVertical: 0,
   },
   taskChild: {
     fontSize: 14,
