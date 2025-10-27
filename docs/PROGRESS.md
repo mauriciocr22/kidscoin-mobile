@@ -10,10 +10,87 @@
 O aplicativo mobile foi desenvolvido do zero usando **React Native + Expo** com **TypeScript**. Toda a estrutura base está implementada, incluindo autenticação, navegação, integração com API backend, **sistema completo de tarefas e recompensas**, **dashboards informativos** e **gamificação completa**.
 
 **Última implementação:**
-- ✅ **Dashboards funcionais** - Child e Parent com dados reais e ações
+- ✅ **Aprovação de resgates** - Pais podem aprovar/rejeitar recompensas solicitadas
+- ✅ **Refazer tarefas rejeitadas** - Crianças podem tentar novamente após feedback
 - ✅ **14/14 telas 100% funcionais** - Sistema completo e polido
 
-**Resultado:** Sistema completo pronto para deploy e apresentação.
+**Resultado:** Sistema completo com fluxo de recompensas e tarefas end-to-end.
+
+---
+
+## 🚀 SESSÃO 7 - 27 DE OUTUBRO DE 2025
+
+### 🎯 NOVAS FEATURES EDUCACIONAIS
+
+#### 1. Refazer Tarefas Rejeitadas (Child)
+
+**Funcionalidades:**
+- ✅ Botão "Refazer Tarefa" para tarefas com status REJECTED
+- ✅ Muda status de REJECTED → PENDING automaticamente
+- ✅ Mensagem motivacional: "Tarefa pronta para refazer! Mostre que você consegue! 💪"
+- ✅ Integração com endpoint `PUT /api/tasks/assignments/{id}/retry`
+
+**Educação:**
+- Ensina crianças a aprender com feedback
+- Incentiva resiliência e melhoria contínua
+- Mostra que erros são oportunidades de aprendizado
+
+**Implementação:**
+- Novo método `retryTask()` em `taskService.ts`
+- Botão visual no card de tarefa rejeitada
+- Exibição do motivo da rejeição antes do botão
+
+#### 2. Melhorias de UX - Tarefas (Child)
+
+**Problemas resolvidos:**
+- ✅ Textos de status desalinhados nos chips
+- ✅ Texto "Aguardando" muito longo → Alterado para "Revisar"
+- ✅ Chips com melhor alinhamento vertical
+
+**Correções aplicadas:**
+- `justifyContent: "center"` e `alignItems: "center"` nos chips
+- `lineHeight: 14` e `marginVertical: 0` no texto do status
+- `density="small"` nos SegmentedButtons
+- Texto mais curto: "⏰ Revisar" em vez de "⏰ Aguardando"
+
+#### 3. Aprovação de Resgates de Recompensas (Parent)
+
+**Funcionalidades:**
+- ✅ Nova seção "Resgates Pendentes de Aprovação" no CreateRewardScreen
+- ✅ Lista de resgates solicitados pelas crianças
+- ✅ Informações do resgate:
+  - 🎁 Nome da recompensa
+  - 💰 Custo em moedas
+  - 👤 Nome da criança
+  - 📅 Data da solicitação
+- ✅ Botões de ação:
+  - **[Aprovar]** - Debita moedas e confirma resgate
+  - **[Rejeitar]** - Abre dialog para motivo da rejeição
+- ✅ Dialog de rejeição com campo de texto obrigatório
+- ✅ Feedback visual com Snackbar de sucesso/erro
+- ✅ Atualização automática da lista
+
+**Fluxo completo:**
+1. Criança solicita resgate na loja (RewardsShopScreen)
+2. Resgate fica com status PENDING
+3. Pai vê resgate na aba Recompensas
+4. Pai aprova → moedas debitadas automaticamente
+5. Pai rejeita → informa motivo que a criança verá
+
+**Commits:**
+```
+1. feat: adiciona funcionalidade de refazer tarefa rejeitada
+2. feat: adiciona aprovação de resgates de recompensas
+```
+
+### 📈 MÉTRICAS ATUALIZADAS
+
+- **Telas completas:** 14/14 (100%) ✅
+- **Fluxo de recompensas:** 100% completo (solicitar → aprovar/rejeitar)
+- **Fluxo de tarefas:** 100% completo (criar → fazer → aprovar/rejeitar → refazer)
+- **Commits totais:** 50 commits
+- **Linhas de código:** ~8000+ linhas TypeScript
+- **Status:** ✅ **SISTEMA EDUCACIONAL COMPLETO**
 
 ---
 
@@ -53,13 +130,13 @@ O aplicativo mobile foi desenvolvido do zero usando **React Native + Expo** com 
 4. docs: atualiza PROGRESS.md (sessão 6)
 ```
 
-### 📈 MÉTRICAS ATUALIZADAS
+### 📈 MÉTRICAS DA SESSÃO 6
 
 - **Telas completas:** 14/14 (100%) ✅
 - **Dashboards:** 100% funcionais com dados reais
-- **Commits totais:** 48 commits
+- **Commits da sessão:** 4 commits
 - **Linhas de código:** ~7500+ linhas TypeScript
-- **Status:** ✅ **PRONTO PARA DEPLOY E APRESENTAÇÃO**
+- **Status:** ✅ **DASHBOARDS PRONTOS**
 
 ---
 
