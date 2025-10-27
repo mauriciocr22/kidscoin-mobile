@@ -34,6 +34,8 @@ export interface TaskAssignment {
   createdAt: string;
 }
 
+export type RecurrenceType = 'DAILY' | 'WEEKLY';
+
 export interface CreateTaskData {
   title: string;
   description?: string;
@@ -41,6 +43,10 @@ export interface CreateTaskData {
   xpValue: number;
   category: TaskCategory;
   childrenIds: string[];
+  isRecurring?: boolean;
+  recurrenceType?: RecurrenceType;
+  recurrenceDays?: string; // "MON,WED,FRI"
+  recurrenceEndDate?: string; // ISO date
 }
 
 export interface RejectTaskData {

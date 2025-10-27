@@ -11,12 +11,14 @@ import {
   Divider,
   IconButton,
   Portal,
+  SegmentedButtons,
   Snackbar,
+  Switch,
   Text,
   TextInput,
 } from "react-native-paper";
 import { getErrorMessage, taskService, userService } from "../../services";
-import { TaskAssignment, TaskCategory, User } from "../../types";
+import { RecurrenceType, TaskAssignment, TaskCategory, User } from "../../types";
 import { COLORS } from "../../utils/constants";
 
 // Categorias disponíveis
@@ -28,6 +30,17 @@ const CATEGORIES: { value: TaskCategory; label: string; icon: string }[] = [
   { value: "OUTRAS", label: "Outras", icon: "dots-horizontal" },
 ];
 
+// Dias da semana
+const WEEKDAYS = [
+  { value: 'MON', label: 'Seg' },
+  { value: 'TUE', label: 'Ter' },
+  { value: 'WED', label: 'Qua' },
+  { value: 'THU', label: 'Qui' },
+  { value: 'FRI', label: 'Sex' },
+  { value: 'SAT', label: 'Sáb' },
+  { value: 'SUN', label: 'Dom' },
+];
+
 const ManageTasksScreen: React.FC = () => {
   // Formulário
   const [title, setTitle] = useState("");
@@ -36,6 +49,13 @@ const ManageTasksScreen: React.FC = () => {
   const [xpValue, setXpValue] = useState("");
   const [category, setCategory] = useState<TaskCategory>("LIMPEZA");
   const [selectedChildren, setSelectedChildren] = useState<string[]>([]);
+
+  // Recorrência
+  const [isRecurring, setIsRecurring] = useState(false);
+  const [recurrenceType, setRecurrenceType] = useState<RecurrenceType>('DAILY');
+  const [selectedWeekdays, setSelectedWeekdays] = useState<string[]>([]);
+  const [hasEndDate, setHasEndDate] = useState(false);
+  const [endDate, setEndDate] = useState('');
 
   // Estados
   const [loading, setLoading] = useState(false);
@@ -118,6 +138,12 @@ const ManageTasksScreen: React.FC = () => {
       return false;
     }
 
+    // Validar recorrência
+    if (isRecurring && recurrenceType === 'WEEKLY' && selectedWeekdays.length === 0) {
+      setError("Selecione pelo menos um dia da semana");
+      return false;
+    }
+
     return true;
   };
 
@@ -143,6 +169,15 @@ const ManageTasksScreen: React.FC = () => {
         xpValue: parseInt(xpValue),
         category,
         childrenIds: selectedChildren,
+        // Dados de recorrência
+        isRecurring: isRecurring || undefined,
+        recurrenceType: isRecurring ? recurrenceType : undefined,
+        recurrenceDays: isRecurring && recurrenceType === 'WEEKLY'
+          ? selectedWeekdays.join(',')
+          : undefined,
+        recurrenceEndDate: isRecurring && hasEndDate && endDate
+          ? endDate
+          : undefined,
       });
 
       console.log("✅ Tarefa criada:", createdTask);
@@ -154,6 +189,11 @@ const ManageTasksScreen: React.FC = () => {
       setCoinValue("");
       setXpValue("");
       setSelectedChildren([]);
+      setIsRecurring(false);
+      setRecurrenceType('DAILY');
+      setSelectedWeekdays([]);
+      setHasEndDate(false);
+      setEndDate('');
 
       // Recarregar tarefas
       console.log("🔄 Recarregando lista de tarefas...");
@@ -244,6 +284,17 @@ const ManageTasksScreen: React.FC = () => {
       prev.includes(childId)
         ? prev.filter((id) => id !== childId)
         : [...prev, childId]
+    );
+  };
+
+  /**
+   * Toggle dia da semana selecionado
+   */
+  const toggleWeekday = (day: string) => {
+    setSelectedWeekdays((prev) =>
+      prev.includes(day)
+        ? prev.filter((d) => d !== day)
+        : [...prev, day]
     );
   };
 
@@ -415,6 +466,90 @@ const ManageTasksScreen: React.FC = () => {
                 })}
               </View>
             )}
+
+            {/* Seção de Recorrência */}
+            <View style={styles.recurrenceSection}>
+              <View style={styles.recurrenceHeader}>
+                <Text style={styles.label}>Tarefa Recorrente</Text>
+                <Switch
+                  value={isRecurring}
+                  onValueChange={setIsRecurring}
+                  color={COLORS.parent.primary}
+                />
+              </View>
+
+              {isRecurring && (
+                <View style={styles.recurrenceOptions}>
+                  <Text style={styles.sublabel}>Frequência</Text>
+                  <SegmentedButtons
+                    value={recurrenceType}
+                    onValueChange={(value) => setRecurrenceType(value as RecurrenceType)}
+                    buttons={[
+                      { value: 'DAILY', label: 'Todos os dias' },
+                      { value: 'WEEKLY', label: 'Dias específicos' },
+                    ]}
+                    style={styles.segmentedButtons}
+                  />
+
+                  {recurrenceType === 'WEEKLY' && (
+                    <View>
+                      <Text style={styles.sublabel}>Dias da semana</Text>
+                      <View style={styles.weekdaysContainer}>
+                        {WEEKDAYS.map((day) => {
+                          const isSelected = selectedWeekdays.includes(day.value);
+                          return (
+                            <Chip
+                              key={day.value}
+                              selected={isSelected}
+                              onPress={() => toggleWeekday(day.value)}
+                              style={[
+                                styles.weekdayChip,
+                                isSelected && styles.chipSelected,
+                              ]}
+                              mode={isSelected ? "flat" : "outlined"}
+                              textStyle={
+                                isSelected
+                                  ? styles.chipTextSelected
+                                  : styles.chipTextUnselected
+                              }
+                            >
+                              {day.label}
+                            </Chip>
+                          );
+                        })}
+                      </View>
+                    </View>
+                  )}
+
+                  <View style={styles.endDateSection}>
+                    <View style={styles.recurrenceHeader}>
+                      <Text style={styles.sublabel}>Definir data final</Text>
+                      <Switch
+                        value={hasEndDate}
+                        onValueChange={setHasEndDate}
+                        color={COLORS.parent.primary}
+                      />
+                    </View>
+
+                    {hasEndDate && (
+                      <TextInput
+                        label="Data final (AAAA-MM-DD)"
+                        value={endDate}
+                        onChangeText={setEndDate}
+                        mode="outlined"
+                        placeholder="2025-12-31"
+                        style={styles.input}
+                        left={<TextInput.Icon icon="calendar" />}
+                      />
+                    )}
+                  </View>
+
+                  <Text style={styles.recurrenceHint}>
+                    💡 A tarefa será criada automaticamente nos dias configurados
+                  </Text>
+                </View>
+              )}
+            </View>
 
             <Button
               mode="contained"
@@ -781,6 +916,52 @@ const styles = StyleSheet.create({
   },
   successSnackbar: {
     backgroundColor: COLORS.child.success,
+  },
+  // Estilos de recorrência
+  recurrenceSection: {
+    marginTop: 15,
+    marginBottom: 15,
+    paddingTop: 15,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.common.border,
+  },
+  recurrenceHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  sublabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: COLORS.common.text,
+    marginTop: 15,
+    marginBottom: 10,
+  },
+  recurrenceOptions: {
+    marginTop: 10,
+  },
+  segmentedButtons: {
+    marginBottom: 10,
+  },
+  weekdaysContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 10,
+  },
+  weekdayChip: {
+    marginBottom: 8,
+  },
+  endDateSection: {
+    marginTop: 10,
+  },
+  recurrenceHint: {
+    fontSize: 12,
+    color: COLORS.common.textLight,
+    fontStyle: 'italic',
+    marginTop: 10,
+    textAlign: 'center',
   },
 });
 
