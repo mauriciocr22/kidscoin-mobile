@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.child.primary,
     padding: 20,
     paddingTop: 10,
-    paddingBottom: 25,
+    paddingBottom: 50,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
   },

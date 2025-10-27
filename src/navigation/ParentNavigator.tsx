@@ -40,6 +40,7 @@ const ParentNavigator: React.FC = () => {
         component={ParentDashboardScreen}
         options={{
           title: 'Início',
+          headerShadowVisible: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="home" size={size} color={color} />
           ),

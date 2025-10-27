@@ -40,6 +40,7 @@ const ChildNavigator: React.FC = () => {
         component={ChildDashboardScreen}
         options={{
           title: 'Início',
+          headerShadowVisible: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="home" size={size} color={color} />
           ),
@@ -70,6 +71,7 @@ const ChildNavigator: React.FC = () => {
         component={ProfileScreen}
         options={{
           title: 'Perfil',
+          headerShadowVisible: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="account" size={size} color={color} />
           ),
