@@ -60,7 +60,7 @@ const ParentDashboardScreen: React.FC = () => {
 
   // Obter tarefas por criança
   const getTasksByChild = (childId: string) => {
-    return tasks.filter(t => t.assignedToChildId === childId);
+    return tasks.filter(t => t.childId === childId);
   };
 
   if (loading) {

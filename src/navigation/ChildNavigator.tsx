@@ -7,6 +7,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ChildDashboardScreen from '../screens/child/ChildDashboardScreen';
 import ChildTasksScreen from '../screens/child/ChildTasksScreen';
 import RewardsShopScreen from '../screens/child/RewardsShopScreen';
+import SavingsScreen from '../screens/child/SavingsScreen';
 import ProfileScreen from '../screens/child/ProfileScreen';
 import { COLORS } from '../utils/constants';
 
@@ -14,6 +15,7 @@ export type ChildTabParamList = {
   Home: undefined;
   Tasks: undefined;
   Shop: undefined;
+  Savings: undefined;
   Profile: undefined;
 };
 
@@ -63,6 +65,16 @@ const ChildNavigator: React.FC = () => {
           title: 'Loja',
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="shopping" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Savings"
+        component={SavingsScreen}
+        options={{
+          title: 'Poupança',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="piggy-bank" size={size} color={color} />
           ),
         }}
       />
