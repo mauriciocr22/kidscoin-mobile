@@ -4,8 +4,8 @@
 
 // URL da API
 export const API_URL = __DEV__
-  ? "http://192.168.1.43:8080/api"
-  : "https://kidscoin-api-production.up.railway.app/api";
+  ? process.env.EXPO_PUBLIC_DEV_API_URL
+  : process.env.EXPO_PUBLIC_PROD_API_URL;
 
 // Chaves do AsyncStorage
 export const STORAGE_KEYS = {
