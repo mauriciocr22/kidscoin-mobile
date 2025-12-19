@@ -221,8 +221,9 @@ const CreateRewardScreen: React.FC = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.content}>
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.content}>
         {/* Formulário de criar recompensa */}
         <Card style={styles.card}>
           <Card.Content>
@@ -409,7 +410,8 @@ const CreateRewardScreen: React.FC = () => {
             )}
           </Card.Content>
         </Card>
-      </View>
+        </View>
+      </ScrollView>
 
       {/* Dialog de exclusão */}
       <Portal>
@@ -467,7 +469,7 @@ const CreateRewardScreen: React.FC = () => {
         </Dialog>
       </Portal>
 
-      {/* Snackbars */}
+      {/* Snackbars - Fora do ScrollView para ficarem fixos */}
       <Snackbar
         visible={!!error}
         onDismiss={() => setError('')}
@@ -485,7 +487,7 @@ const CreateRewardScreen: React.FC = () => {
       >
         {success}
       </Snackbar>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -493,6 +495,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.parent.background,
+  },
+  scrollView: {
+    flex: 1,
   },
   content: {
     padding: 20,

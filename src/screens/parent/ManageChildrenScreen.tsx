@@ -177,8 +177,9 @@ const ManageChildrenScreen: React.FC = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.content}>
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.content}>
         {/* Formulário de criar criança */}
         <Card style={styles.card}>
           <Card.Content>
@@ -301,7 +302,8 @@ const ManageChildrenScreen: React.FC = () => {
             )}
           </Card.Content>
         </Card>
-      </View>
+        </View>
+      </ScrollView>
 
       {/* Dialog de exclusão de criança */}
       <Portal>
@@ -358,7 +360,7 @@ const ManageChildrenScreen: React.FC = () => {
       >
         {success}
       </Snackbar>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -366,6 +368,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.parent.background,
+  },
+  scrollView: {
+    flex: 1,
   },
   content: {
     padding: 20,
