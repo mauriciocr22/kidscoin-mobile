@@ -85,8 +85,8 @@ const ManageChildrenScreen: React.FC = () => {
     }
 
     const ageNum = parseInt(age);
-    if (isNaN(ageNum) || ageNum < 6 || ageNum > 14) {
-      setError('Idade deve estar entre 6 e 14 anos');
+    if (isNaN(ageNum) || ageNum < 1) {
+      setError('Idade inválida');
       return false;
     }
 
@@ -210,7 +210,7 @@ const ManageChildrenScreen: React.FC = () => {
             />
 
             <TextInput
-              label="Idade (6-14 anos)"
+              label="Idade"
               value={age}
               onChangeText={setAge}
               mode="outlined"
