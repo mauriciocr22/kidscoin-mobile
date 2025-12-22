@@ -1,21 +1,10 @@
 /**
  * Tela para gerenciar crianças
  */
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Alert } from 'react-native';
-import {
-  Text,
-  TextInput,
-  Button,
-  Card,
-  Divider,
-  List,
-  Snackbar,
-  IconButton,
-  Dialog,
-  Portal,
-} from 'react-native-paper';
-import { userService, getErrorMessage } from '../../services';
+import React, { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { Button, Card, Dialog, Divider, IconButton, List, Portal, Snackbar, Text, TextInput } from 'react-native-paper';
+import { getErrorMessage, userService } from '../../services';
 import { User } from '../../types';
 import { COLORS } from '../../utils/constants';
 
@@ -129,9 +118,7 @@ const ManageChildrenScreen: React.FC = () => {
         pin: pin.trim(),
       });
 
-      setSuccess(
-        `${newChild.fullName} foi criado(a)! Use "${username}" para fazer login.`
-      );
+      setSuccess(`${newChild.fullName} foi criado(a)! Use "${username}" para fazer login.`);
 
       // Limpar formulário
       setFullName('');
@@ -180,128 +167,122 @@ const ManageChildrenScreen: React.FC = () => {
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.content}>
-        {/* Formulário de criar criança */}
-        <Card style={styles.card}>
-          <Card.Content>
-            <Text style={styles.cardTitle}>Criar Nova Criança</Text>
-            <Text style={styles.cardSubtitle}>
-              Cadastre uma criança para sua família
-            </Text>
+          {/* Formulário de criar criança */}
+          <Card style={styles.card}>
+            <Card.Content>
+              <Text style={styles.cardTitle}>Cadastrar Nova Criança</Text>
+              <Text style={styles.cardSubtitle}>Cadastre uma criança para sua família</Text>
 
-            <TextInput
-              label="Nome da Criança"
-              value={fullName}
-              onChangeText={setFullName}
-              mode="outlined"
-              style={styles.input}
-              left={<TextInput.Icon icon="account" />}
-              placeholder="Ex: João Silva"
-            />
+              <TextInput
+                label="Nome da Criança"
+                value={fullName}
+                onChangeText={setFullName}
+                mode="outlined"
+                style={styles.input}
+                left={<TextInput.Icon icon="account" />}
+                placeholder="Ex: João Silva"
+              />
 
-            <TextInput
-              label="Username"
-              value={username}
-              onChangeText={(text) => setUsername(text.toLowerCase())}
-              mode="outlined"
-              autoCapitalize="none"
-              style={styles.input}
-              left={<TextInput.Icon icon="at" />}
-              placeholder="Ex: joao_silva"
-            />
+              <TextInput
+                label="Username"
+                value={username}
+                onChangeText={(text) => setUsername(text.toLowerCase())}
+                mode="outlined"
+                autoCapitalize="none"
+                style={styles.input}
+                left={<TextInput.Icon icon="at" />}
+                placeholder="Ex: joao_silva"
+              />
 
-            <TextInput
-              label="Idade"
-              value={age}
-              onChangeText={setAge}
-              mode="outlined"
-              keyboardType="numeric"
-              maxLength={2}
-              style={styles.input}
-              left={<TextInput.Icon icon="calendar" />}
-              placeholder="Ex: 10"
-            />
+              <TextInput
+                label="Idade"
+                value={age}
+                onChangeText={setAge}
+                mode="outlined"
+                keyboardType="numeric"
+                maxLength={2}
+                style={styles.input}
+                left={<TextInput.Icon icon="calendar" />}
+                placeholder="Ex: 10"
+              />
 
-            <TextInput
-              label="PIN (4 dígitos)"
-              value={pin}
-              onChangeText={setPin}
-              mode="outlined"
-              keyboardType="numeric"
-              maxLength={4}
-              secureTextEntry
-              style={styles.input}
-              left={<TextInput.Icon icon="lock" />}
-              placeholder="1234"
-            />
+              <TextInput
+                label="PIN (4 dígitos)"
+                value={pin}
+                onChangeText={setPin}
+                mode="outlined"
+                keyboardType="numeric"
+                maxLength={4}
+                secureTextEntry
+                style={styles.input}
+                left={<TextInput.Icon icon="lock" />}
+                placeholder="1234"
+              />
 
-            <Text style={styles.helperText}>
-              💡 A criança usará o username e o PIN para fazer login
-            </Text>
+              <Text style={styles.helperText}>💡 A criança usará o username e o PIN para fazer login</Text>
 
-            <Button
-              mode="contained"
-              onPress={handleCreateChild}
-              loading={loading}
-              disabled={loading}
-              style={styles.createButton}
-              buttonColor={COLORS.parent.primary}
-              icon="plus"
-            >
-              Criar Criança
-            </Button>
-          </Card.Content>
-        </Card>
+              <Button
+                mode="contained"
+                onPress={handleCreateChild}
+                loading={loading}
+                disabled={loading}
+                style={styles.createButton}
+                buttonColor={COLORS.parent.primary}
+                icon="plus"
+              >
+                Cadastrar Criança
+              </Button>
+            </Card.Content>
+          </Card>
 
-        {/* Lista de crianças */}
-        <Card style={styles.card}>
-          <Card.Content>
-            <Text style={styles.cardTitle}>Crianças Cadastradas</Text>
+          {/* Lista de crianças */}
+          <Card style={styles.card}>
+            <Card.Content>
+              <Text style={styles.cardTitle}>Crianças Cadastradas</Text>
 
-            {loadingChildren ? (
-              <Text style={styles.emptyText}>Carregando...</Text>
-            ) : children.length === 0 ? (
-              <Text style={styles.emptyText}>
-                Nenhuma criança cadastrada ainda.
-              </Text>
-            ) : (
-              <View>
-                {children.map((child, index) => {
-                  // Extrair username do email se não vier do backend
-                  let username = 'sem-username';
+              {loadingChildren ? (
+                <Text style={styles.emptyText}>Carregando...</Text>
+              ) : children.length === 0 ? (
+                <Text style={styles.emptyText}>Nenhuma criança cadastrada ainda.</Text>
+              ) : (
+                <View>
+                  {children.map((child, index) => {
+                    // Extrair username do email se não vier do backend
+                    let username = 'sem-username';
 
-                  if (child.username) {
-                    // 1. Prioridade: username do backend
-                    username = child.username;
-                  } else if (child.email) {
-                    // 2. Extrai do email (ex: gustavo.rodrigues.xxx@child.local → gustavo.rodrigues.xxx)
-                    username = child.email.split('@')[0];
-                  }
+                    if (child.username) {
+                      // 1. Prioridade: username do backend
+                      username = child.username;
+                    } else if (child.email) {
+                      // 2. Extrai do email (ex: gustavo.rodrigues.xxx@child.local → gustavo.rodrigues.xxx)
+                      username = child.email.split('@')[0];
+                    }
 
-                  return (
-                    <React.Fragment key={child.id}>
-                      <List.Item
-                        title={child.fullName}
-                        description={`@${username}`}
-                        left={(props) => <List.Icon {...props} icon="account-child" />}
-                        right={(props) => (
-                          <IconButton
-                            icon="delete"
-                            iconColor={COLORS.common.error}
-                            size={20}
-                            onPress={() => openDeleteDialog(child)}
-                          />
-                        )}
-                        titleStyle={styles.childName}
-                        descriptionStyle={styles.childUsername}
-                      />
-                      {index < children.length - 1 && <Divider />}
-                    </React.Fragment>
-                  );
-                })}
-              </View>
-            )}
-          </Card.Content>
-        </Card>
+                    return (
+                      <React.Fragment key={child.id}>
+                        <List.Item
+                          title={child.fullName}
+                          description={`@${username}`}
+                          left={(props) => <List.Icon {...props} icon="account-child" />}
+                          right={(props) => (
+                            <IconButton
+                              icon="delete"
+                              iconColor={COLORS.common.error}
+                              size={20}
+                              onPress={() => openDeleteDialog(child)}
+                            />
+                          )}
+                          titleStyle={styles.childName}
+                          descriptionStyle={styles.childUsername}
+                        />
+                        {index < children.length - 1 && <Divider />}
+                      </React.Fragment>
+                    );
+                  })}
+                </View>
+              )}
+            </Card.Content>
+          </Card>
         </View>
       </ScrollView>
 
@@ -313,28 +294,18 @@ const ManageChildrenScreen: React.FC = () => {
             <Text style={styles.dialogText}>
               Tem certeza que deseja excluir <Text style={styles.dialogChildName}>{deletingChild?.fullName}</Text>?
             </Text>
-            <Text style={[styles.dialogText, styles.dialogWarning]}>
-              ⚠️ ATENÇÃO: Esta é uma ação IRREVERSÍVEL!
-            </Text>
-            <Text style={styles.dialogWarningList}>
-              Será permanentemente excluído:
-            </Text>
+            <Text style={[styles.dialogText, styles.dialogWarning]}>⚠️ ATENÇÃO: Esta é uma ação IRREVERSÍVEL!</Text>
+            <Text style={styles.dialogWarningList}>Será permanentemente excluído:</Text>
             <Text style={styles.dialogWarningItem}>• Todas as tarefas atribuídas</Text>
             <Text style={styles.dialogWarningItem}>• Saldo de moedas</Text>
             <Text style={styles.dialogWarningItem}>• Poupança</Text>
             <Text style={styles.dialogWarningItem}>• Badges e conquistas</Text>
             <Text style={styles.dialogWarningItem}>• Histórico completo</Text>
-            <Text style={[styles.dialogText, styles.dialogFinalWarning]}>
-              Esta ação NÃO pode ser desfeita!
-            </Text>
+            <Text style={[styles.dialogText, styles.dialogFinalWarning]}>Esta ação NÃO pode ser desfeita!</Text>
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={() => setDeleteDialogVisible(false)}>Cancelar</Button>
-            <Button
-              onPress={handleDeleteChild}
-              textColor={COLORS.common.error}
-              buttonColor="transparent"
-            >
+            <Button onPress={handleDeleteChild} textColor={COLORS.common.error} buttonColor="transparent">
               Excluir Permanentemente
             </Button>
           </Dialog.Actions>
@@ -342,22 +313,12 @@ const ManageChildrenScreen: React.FC = () => {
       </Portal>
 
       {/* Snackbar de erro */}
-      <Snackbar
-        visible={!!error}
-        onDismiss={() => setError('')}
-        duration={3000}
-        style={styles.errorSnackbar}
-      >
+      <Snackbar visible={!!error} onDismiss={() => setError('')} duration={3000} style={styles.errorSnackbar}>
         {error}
       </Snackbar>
 
       {/* Snackbar de sucesso */}
-      <Snackbar
-        visible={!!success}
-        onDismiss={() => setSuccess('')}
-        duration={3000}
-        style={styles.successSnackbar}
-      >
+      <Snackbar visible={!!success} onDismiss={() => setSuccess('')} duration={3000} style={styles.successSnackbar}>
         {success}
       </Snackbar>
     </View>

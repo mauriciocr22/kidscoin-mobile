@@ -131,7 +131,7 @@ const ChildTasksScreen: React.FC = () => {
       case "PENDING":
         return "⏳ Fazer";
       case "COMPLETED":
-        return "⏰ Revisar";
+        return "⏰ Revisando";
       case "APPROVED":
         return "✅ Aprovada";
       case "REJECTED":
@@ -169,7 +169,7 @@ const ChildTasksScreen: React.FC = () => {
             },
             {
               value: "COMPLETED",
-              label: `Revisar (${countByStatus("COMPLETED")})`,
+              label: `Revisando (${countByStatus("COMPLETED")})`,
               style: styles.segmentButton,
             },
           ]}
