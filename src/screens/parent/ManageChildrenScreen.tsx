@@ -1,34 +1,23 @@
 /**
  * Tela para gerenciar crianças
  */
-import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
-import {
-  Button,
-  Card,
-  Dialog,
-  Divider,
-  IconButton,
-  List,
-  Portal,
-  Snackbar,
-  Text,
-  TextInput,
-} from "react-native-paper";
-import { getErrorMessage, userService } from "../../services";
-import { User } from "../../types";
-import { COLORS } from "../../utils/constants";
+import React, { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { Button, Card, Dialog, Divider, IconButton, List, Portal, Snackbar, Text, TextInput } from 'react-native-paper';
+import { getErrorMessage, userService } from '../../services';
+import { User } from '../../types';
+import { COLORS } from '../../utils/constants';
 
 const ManageChildrenScreen: React.FC = () => {
-  const [fullName, setFullName] = useState("");
-  const [username, setUsername] = useState("");
-  const [age, setAge] = useState("");
-  const [pin, setPin] = useState("");
+  const [fullName, setFullName] = useState('');
+  const [username, setUsername] = useState('');
+  const [age, setAge] = useState('');
+  const [pin, setPin] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingChildren, setLoadingChildren] = useState(false);
   const [children, setChildren] = useState<User[]>([]);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   // Dialog de exclusão
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
@@ -46,10 +35,10 @@ const ManageChildrenScreen: React.FC = () => {
     setLoadingChildren(true);
     try {
       const data = await userService.getChildren();
-      console.log("👶 Crianças carregadas:", JSON.stringify(data, null, 2));
+      console.log('👶 Crianças carregadas:', JSON.stringify(data, null, 2));
       setChildren(data);
     } catch (err: any) {
-      console.error("Erro ao carregar crianças:", err);
+      console.error('Erro ao carregar crianças:', err);
     } finally {
       setLoadingChildren(false);
     }
@@ -60,48 +49,48 @@ const ManageChildrenScreen: React.FC = () => {
    */
   const validateForm = (): boolean => {
     if (!fullName.trim()) {
-      setError("Preencha o nome da criança");
+      setError('Preencha o nome da criança');
       return false;
     }
 
     if (!username.trim()) {
-      setError("Preencha o username");
+      setError('Preencha o username');
       return false;
     }
 
     if (username.length < 3) {
-      setError("Username deve ter pelo menos 3 caracteres");
+      setError('Username deve ter pelo menos 3 caracteres');
       return false;
     }
 
     if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
-      setError("Username pode conter apenas letras, números, - e _");
+      setError('Username pode conter apenas letras, números, - e _');
       return false;
     }
 
     if (!age.trim()) {
-      setError("Preencha a idade");
+      setError('Preencha a idade');
       return false;
     }
 
     const ageNum = parseInt(age);
     if (isNaN(ageNum) || ageNum < 1) {
-      setError("Idade inválida");
+      setError('Idade inválida');
       return false;
     }
 
     if (!pin.trim()) {
-      setError("Preencha o PIN");
+      setError('Preencha o PIN');
       return false;
     }
 
     if (pin.length !== 4) {
-      setError("O PIN deve ter 4 dígitos");
+      setError('O PIN deve ter 4 dígitos');
       return false;
     }
 
     if (!/^\d{4}$/.test(pin)) {
-      setError("O PIN deve conter apenas números");
+      setError('O PIN deve conter apenas números');
       return false;
     }
 
@@ -112,8 +101,8 @@ const ManageChildrenScreen: React.FC = () => {
    * Criar nova criança
    */
   const handleCreateChild = async () => {
-    setError("");
-    setSuccess("");
+    setError('');
+    setSuccess('');
 
     if (!validateForm()) {
       return;
@@ -129,15 +118,13 @@ const ManageChildrenScreen: React.FC = () => {
         pin: pin.trim(),
       });
 
-      setSuccess(
-        `${newChild.fullName} foi criado(a)! Use "${username}" para fazer login.`
-      );
+      setSuccess(`${newChild.fullName} foi criado(a)! Use "${username}" para fazer login.`);
 
       // Limpar formulário
-      setFullName("");
-      setUsername("");
-      setAge("");
-      setPin("");
+      setFullName('');
+      setUsername('');
+      setAge('');
+      setPin('');
 
       // Recarregar lista
       await loadChildren();
@@ -184,9 +171,7 @@ const ManageChildrenScreen: React.FC = () => {
           <Card style={styles.card}>
             <Card.Content>
               <Text style={styles.cardTitle}>Cadastrar Nova Criança</Text>
-              <Text style={styles.cardSubtitle}>
-                Cadastre uma criança para sua família
-              </Text>
+              <Text style={styles.cardSubtitle}>Cadastre uma criança para sua família</Text>
 
               <TextInput
                 label="Nome da Criança"
@@ -234,9 +219,7 @@ const ManageChildrenScreen: React.FC = () => {
                 placeholder="1234"
               />
 
-              <Text style={styles.helperText}>
-                💡 A criança usará o username e o PIN para fazer login
-              </Text>
+              <Text style={styles.helperText}>💡 A criança usará o username e o PIN para fazer login</Text>
 
               <Button
                 mode="contained"
@@ -260,21 +243,19 @@ const ManageChildrenScreen: React.FC = () => {
               {loadingChildren ? (
                 <Text style={styles.emptyText}>Carregando...</Text>
               ) : children.length === 0 ? (
-                <Text style={styles.emptyText}>
-                  Nenhuma criança cadastrada ainda.
-                </Text>
+                <Text style={styles.emptyText}>Nenhuma criança cadastrada ainda.</Text>
               ) : (
                 <View>
                   {children.map((child, index) => {
                     // Extrair username do email se não vier do backend
-                    let username = "sem-username";
+                    let username = 'sem-username';
 
                     if (child.username) {
                       // 1. Prioridade: username do backend
                       username = child.username;
                     } else if (child.email) {
                       // 2. Extrai do email (ex: gustavo.rodrigues.xxx@child.local → gustavo.rodrigues.xxx)
-                      username = child.email.split("@")[0];
+                      username = child.email.split('@')[0];
                     }
 
                     return (
@@ -282,9 +263,7 @@ const ManageChildrenScreen: React.FC = () => {
                         <List.Item
                           title={child.fullName}
                           description={`@${username}`}
-                          left={(props) => (
-                            <List.Icon {...props} icon="account-child" />
-                          )}
+                          left={(props) => <List.Icon {...props} icon="account-child" />}
                           right={(props) => (
                             <IconButton
                               icon="delete"
@@ -309,47 +288,24 @@ const ManageChildrenScreen: React.FC = () => {
 
       {/* Dialog de exclusão de criança */}
       <Portal>
-        <Dialog
-          visible={deleteDialogVisible}
-          onDismiss={() => setDeleteDialogVisible(false)}
-        >
-          <Dialog.Title style={styles.dialogTitle}>
-            ⚠️ Excluir Criança
-          </Dialog.Title>
+        <Dialog visible={deleteDialogVisible} onDismiss={() => setDeleteDialogVisible(false)}>
+          <Dialog.Title style={styles.dialogTitle}>⚠️ Excluir Criança</Dialog.Title>
           <Dialog.Content>
             <Text style={styles.dialogText}>
-              Tem certeza que deseja excluir{" "}
-              <Text style={styles.dialogChildName}>
-                {deletingChild?.fullName}
-              </Text>
-              ?
+              Tem certeza que deseja excluir <Text style={styles.dialogChildName}>{deletingChild?.fullName}</Text>?
             </Text>
-            <Text style={[styles.dialogText, styles.dialogWarning]}>
-              ⚠️ ATENÇÃO: Esta é uma ação IRREVERSÍVEL!
-            </Text>
-            <Text style={styles.dialogWarningList}>
-              Será permanentemente excluído:
-            </Text>
-            <Text style={styles.dialogWarningItem}>
-              • Todas as tarefas atribuídas
-            </Text>
+            <Text style={[styles.dialogText, styles.dialogWarning]}>⚠️ ATENÇÃO: Esta é uma ação IRREVERSÍVEL!</Text>
+            <Text style={styles.dialogWarningList}>Será permanentemente excluído:</Text>
+            <Text style={styles.dialogWarningItem}>• Todas as tarefas atribuídas</Text>
             <Text style={styles.dialogWarningItem}>• Saldo de moedas</Text>
             <Text style={styles.dialogWarningItem}>• Poupança</Text>
             <Text style={styles.dialogWarningItem}>• Badges e conquistas</Text>
             <Text style={styles.dialogWarningItem}>• Histórico completo</Text>
-            <Text style={[styles.dialogText, styles.dialogFinalWarning]}>
-              Esta ação NÃO pode ser desfeita!
-            </Text>
+            <Text style={[styles.dialogText, styles.dialogFinalWarning]}>Esta ação NÃO pode ser desfeita!</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={() => setDeleteDialogVisible(false)}>
-              Cancelar
-            </Button>
-            <Button
-              onPress={handleDeleteChild}
-              textColor={COLORS.common.error}
-              buttonColor="transparent"
-            >
+            <Button onPress={() => setDeleteDialogVisible(false)}>Cancelar</Button>
+            <Button onPress={handleDeleteChild} textColor={COLORS.common.error} buttonColor="transparent">
               Excluir Permanentemente
             </Button>
           </Dialog.Actions>
@@ -357,22 +313,12 @@ const ManageChildrenScreen: React.FC = () => {
       </Portal>
 
       {/* Snackbar de erro */}
-      <Snackbar
-        visible={!!error}
-        onDismiss={() => setError("")}
-        duration={3000}
-        style={styles.errorSnackbar}
-      >
+      <Snackbar visible={!!error} onDismiss={() => setError('')} duration={3000} style={styles.errorSnackbar}>
         {error}
       </Snackbar>
 
       {/* Snackbar de sucesso */}
-      <Snackbar
-        visible={!!success}
-        onDismiss={() => setSuccess("")}
-        duration={3000}
-        style={styles.successSnackbar}
-      >
+      <Snackbar visible={!!success} onDismiss={() => setSuccess('')} duration={3000} style={styles.successSnackbar}>
         {success}
       </Snackbar>
     </View>
@@ -396,7 +342,7 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: COLORS.common.text,
     marginBottom: 5,
   },
@@ -412,7 +358,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: COLORS.common.textLight,
     marginBottom: 20,
-    fontStyle: "italic",
+    fontStyle: 'italic',
   },
   createButton: {
     marginTop: 10,
@@ -420,23 +366,23 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 14,
     color: COLORS.common.textLight,
-    textAlign: "center",
+    textAlign: 'center',
     paddingVertical: 20,
-    fontStyle: "italic",
+    fontStyle: 'italic',
   },
   childName: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
     color: COLORS.common.text,
   },
   childUsername: {
     fontSize: 14,
     color: COLORS.parent.primary,
-    fontWeight: "500",
+    fontWeight: '500',
   },
   dialogTitle: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   dialogText: {
     fontSize: 14,
@@ -444,19 +390,19 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   dialogChildName: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: COLORS.parent.primary,
   },
   dialogWarning: {
     color: COLORS.common.error,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     fontSize: 15,
     marginTop: 10,
     marginBottom: 15,
   },
   dialogWarningList: {
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
     color: COLORS.common.text,
     marginBottom: 8,
   },
@@ -468,8 +414,8 @@ const styles = StyleSheet.create({
   },
   dialogFinalWarning: {
     color: COLORS.common.error,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
+    textAlign: 'center',
     marginTop: 15,
     fontSize: 14,
   },
