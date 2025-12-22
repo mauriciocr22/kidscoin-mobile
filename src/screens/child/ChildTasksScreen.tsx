@@ -12,14 +12,24 @@ import {
   Text,
 } from "react-native-paper";
 import { getErrorMessage, taskService } from "../../services";
-import { AssignmentStatus, TaskAssignment } from "../../types";
+import { AssignmentStatus, TaskAssignment, TaskCategory } from "../../types";
 import { COLORS } from "../../utils/constants";
+
+// Categorias disponíveis
+const CATEGORIES: { value: TaskCategory; label: string; icon: string }[] = [
+  { value: "LIMPEZA", label: "Limpeza", icon: "broom" },
+  { value: "ORGANIZACAO", label: "Organização", icon: "package-variant" },
+  { value: "ESTUDOS", label: "Estudos", icon: "book-open" },
+  { value: "CUIDADOS", label: "Cuidados", icon: "heart" },
+  { value: "OUTRAS", label: "Outras", icon: "dots-horizontal" },
+];
 
 const ChildTasksScreen: React.FC = () => {
   const [tasks, setTasks] = useState<TaskAssignment[]>([]);
   const [filteredTasks, setFilteredTasks] = useState<TaskAssignment[]>([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState<"all" | AssignmentStatus>("all");
+  const [categoryFilter, setCategoryFilter] = useState<TaskCategory | null>(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -29,7 +39,7 @@ const ChildTasksScreen: React.FC = () => {
 
   useEffect(() => {
     filterTasks();
-  }, [tasks, filter]);
+  }, [tasks, filter, categoryFilter]);
 
   /**
    * Carregar tarefas
@@ -54,11 +64,19 @@ const ChildTasksScreen: React.FC = () => {
    * Filtrar tarefas
    */
   const filterTasks = () => {
-    if (filter === "all") {
-      setFilteredTasks(tasks);
-    } else {
-      setFilteredTasks(tasks.filter((t) => t.status === filter));
+    let result = tasks;
+
+    // Filtrar por status
+    if (filter !== "all") {
+      result = result.filter((t) => t.status === filter);
     }
+
+    // Filtrar por categoria
+    if (categoryFilter) {
+      result = result.filter((t) => t.task.category === categoryFilter);
+    }
+
+    setFilteredTasks(result);
   };
 
   /**
@@ -174,6 +192,53 @@ const ChildTasksScreen: React.FC = () => {
             },
           ]}
         />
+
+        {/* Filtro de categoria */}
+        <Text style={styles.filterLabel}>Categoria</Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.categoryScrollView}
+        >
+          <View style={styles.categoryChips}>
+            <Chip
+              selected={categoryFilter === null}
+              onPress={() => setCategoryFilter(null)}
+              style={[
+                styles.chip,
+                categoryFilter === null && styles.chipSelected,
+              ]}
+              mode={categoryFilter === null ? "flat" : "outlined"}
+              textStyle={
+                categoryFilter === null
+                  ? styles.chipTextSelected
+                  : styles.chipTextUnselected
+              }
+            >
+              Todas
+            </Chip>
+            {CATEGORIES.map((cat) => {
+              const isSelected = categoryFilter === cat.value;
+              return (
+                <Chip
+                  key={cat.value}
+                  selected={isSelected}
+                  onPress={() => setCategoryFilter(cat.value)}
+                  style={[styles.chip, isSelected && styles.chipSelected]}
+                  icon={cat.icon}
+                  mode={isSelected ? "flat" : "outlined"}
+                  textStyle={
+                    isSelected
+                      ? styles.chipTextSelected
+                      : styles.chipTextUnselected
+                  }
+                >
+                  {cat.label}
+                </Chip>
+              );
+            })}
+          </View>
+        </ScrollView>
       </View>
 
       <ScrollView style={styles.content}>
@@ -324,6 +389,32 @@ const styles = StyleSheet.create({
   },
   segmentButton: {
     minHeight: 40,
+  },
+  filterLabel: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: COLORS.common.textLight,
+    marginTop: 15,
+    marginBottom: 8,
+  },
+  categoryScrollView: {
+    marginBottom: 0,
+  },
+  categoryChips: {
+    flexDirection: "row",
+  },
+  chip: {
+    marginRight: 8,
+  },
+  chipSelected: {
+    backgroundColor: COLORS.child.primary,
+  },
+  chipTextSelected: {
+    color: COLORS.common.white,
+    fontWeight: "600",
+  },
+  chipTextUnselected: {
+    color: COLORS.common.text,
   },
   content: {
     flex: 1,

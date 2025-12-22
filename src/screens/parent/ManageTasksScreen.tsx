@@ -64,6 +64,7 @@ const ManageTasksScreen: React.FC = () => {
   const [tasks, setTasks] = useState<TaskAssignment[]>([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState<TaskCategory | null>(null);
 
   // Dialog de rejeição
   const [rejectDialogVisible, setRejectDialogVisible] = useState(false);
@@ -349,7 +350,11 @@ const ManageTasksScreen: React.FC = () => {
       APPROVED: 4, // Já foi tratada
     };
 
-    return [...tasks].sort((a, b) => {
+    let filteredTasks = categoryFilter
+      ? tasks.filter((t) => t.task.category === categoryFilter)
+      : tasks;
+
+    return [...filteredTasks].sort((a, b) => {
       const priorityA = priorityMap[a.status] || 999;
       const priorityB = priorityMap[b.status] || 999;
       return priorityA - priorityB;
@@ -570,6 +575,53 @@ const ManageTasksScreen: React.FC = () => {
         <Card style={styles.card}>
           <Card.Content>
             <Text style={styles.cardTitle}>Tarefas Atribuídas</Text>
+
+            {/* Filtro de categoria */}
+            <Text style={styles.label}>Filtrar por categoria</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.filterScrollView}
+            >
+              <View style={styles.filterChips}>
+                <Chip
+                  selected={categoryFilter === null}
+                  onPress={() => setCategoryFilter(null)}
+                  style={[
+                    styles.chip,
+                    categoryFilter === null && styles.chipSelected,
+                  ]}
+                  mode={categoryFilter === null ? "flat" : "outlined"}
+                  textStyle={
+                    categoryFilter === null
+                      ? styles.chipTextSelected
+                      : styles.chipTextUnselected
+                  }
+                >
+                  Todas
+                </Chip>
+                {CATEGORIES.map((cat) => {
+                  const isSelected = categoryFilter === cat.value;
+                  return (
+                    <Chip
+                      key={cat.value}
+                      selected={isSelected}
+                      onPress={() => setCategoryFilter(cat.value)}
+                      style={[styles.chip, isSelected && styles.chipSelected]}
+                      icon={cat.icon}
+                      mode={isSelected ? "flat" : "outlined"}
+                      textStyle={
+                        isSelected
+                          ? styles.chipTextSelected
+                          : styles.chipTextUnselected
+                      }
+                    >
+                      {cat.label}
+                    </Chip>
+                  );
+                })}
+              </View>
+            </ScrollView>
 
             {loadingTasks ? (
               <Text style={styles.emptyText}>Carregando...</Text>
@@ -802,6 +854,12 @@ const styles = StyleSheet.create({
   categoryRow: {
     flexDirection: "row",
     marginBottom: 15,
+  },
+  filterScrollView: {
+    marginBottom: 15,
+  },
+  filterChips: {
+    flexDirection: "row",
   },
   chip: {
     marginRight: 8,
