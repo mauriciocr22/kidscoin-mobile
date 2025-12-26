@@ -3,19 +3,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import {
-  Button,
-  Card,
-  Dialog,
-  Divider,
-  IconButton,
-  List,
-  Portal,
-  Snackbar,
-  Switch,
-  Text,
-  TextInput,
-} from 'react-native-paper';
+import { Button, Card, Dialog, Divider, List, Portal, Snackbar, Switch, Text, TextInput } from 'react-native-paper';
 import { getErrorMessage, rewardService } from '../../services';
 import { Redemption, Reward } from '../../types';
 import { COLORS } from '../../utils/constants';
@@ -34,10 +22,6 @@ const CreateRewardScreen: React.FC = () => {
   const [redemptions, setRedemptions] = useState<Redemption[]>([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-
-  // Dialog de exclusão
-  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
-  const [deletingReward, setDeletingReward] = useState<Reward | null>(null);
 
   // Dialog de rejeição
   const [rejectDialogVisible, setRejectDialogVisible] = useState(false);
@@ -125,33 +109,6 @@ const CreateRewardScreen: React.FC = () => {
     try {
       await rewardService.toggleReward(reward.id);
       setSuccess(reward.isActive ? `${reward.name} foi desativada` : `${reward.name} foi ativada`);
-      await loadRewards();
-    } catch (err: any) {
-      setError(getErrorMessage(err));
-    }
-  };
-
-  /**
-   * Abrir dialog de exclusão
-   */
-  const openDeleteDialog = (reward: Reward) => {
-    setDeletingReward(reward);
-    setDeleteDialogVisible(true);
-  };
-
-  /**
-   * Deletar recompensa
-   */
-  const handleDeleteReward = async () => {
-    if (!deletingReward) {
-      return;
-    }
-
-    try {
-      await rewardService.deleteReward(deletingReward.id);
-      setSuccess(`${deletingReward.name} foi excluída com sucesso.`);
-      setDeleteDialogVisible(false);
-      setDeletingReward(null);
       await loadRewards();
     } catch (err: any) {
       setError(getErrorMessage(err));
@@ -286,53 +243,41 @@ const CreateRewardScreen: React.FC = () => {
                   {rewards.map((reward, index) => (
                     <React.Fragment key={reward.id}>
                       <View style={styles.rewardItem}>
-                        {/* Header com ícone e título */}
+                        {/* Header: Ícone + Título e Descrição + Indicador de Status */}
                         <View style={styles.rewardHeader}>
-                          <View style={styles.rewardIconContainer}>
-                            <List.Icon
-                              icon="gift"
-                              color={reward.isActive ? COLORS.parent.primary : COLORS.common.textLight}
-                            />
+                          <View style={styles.rewardIconLarge}>
+                            <List.Icon icon="gift" color={COLORS.common.white} size={32} />
                           </View>
-                          <View style={styles.rewardHeaderText}>
+
+                          <View style={styles.rewardContent}>
                             <Text style={[styles.rewardName, !reward.isActive && styles.rewardNameInactive]}>
                               {reward.name}
                             </Text>
+                            {reward.description && <Text style={styles.rewardDescription}>{reward.description}</Text>}
                           </View>
-                        </View>
 
-                        {/* Descrição (se houver) */}
-                        {reward.description && <Text style={styles.rewardDescription}>{reward.description}</Text>}
-
-                        {/* Valor em moedas */}
-                        <View style={styles.rewardCostContainer}>
-                          <Text style={styles.rewardCostLabel}>Custo:</Text>
-                          <Text style={styles.rewardCost}>💰 {reward.coinCost} moedas</Text>
-                        </View>
-
-                        {/* Ações (Switch e Delete) */}
-                        <View style={styles.rewardActions}>
-                          <View style={styles.rewardToggle}>
-                            <View style={styles.switchContainer}>
-                              <Switch
-                                value={reward.isActive}
-                                onValueChange={() => handleToggleReward(reward)}
-                                color={COLORS.parent.primary}
-                              />
-                            </View>
-                            <Text
-                              style={[styles.statusText, reward.isActive ? styles.statusActive : styles.statusInactive]}
-                            >
-                              {reward.isActive ? 'Ativa' : 'Inativa'}
-                            </Text>
-                          </View>
-                          <IconButton
-                            icon="delete"
-                            iconColor={COLORS.common.error}
-                            size={24}
-                            onPress={() => openDeleteDialog(reward)}
-                            style={styles.deleteButton}
+                          <View
+                            style={[
+                              styles.statusIndicator,
+                              reward.isActive ? styles.statusIndicatorActive : styles.statusIndicatorInactive,
+                            ]}
                           />
+                        </View>
+
+                        {/* Bottom Row: Custo + Switch */}
+                        <View style={styles.rewardBottomRow}>
+                          <View style={styles.costContainer}>
+                            <Text style={styles.costIcon}>💰</Text>
+                            <Text style={styles.costText}>{reward.coinCost} moedas</Text>
+                          </View>
+
+                          <View style={styles.switchContainer}>
+                            <Switch
+                              value={reward.isActive}
+                              onValueChange={() => handleToggleReward(reward)}
+                              color={COLORS.child.success}
+                            />
+                          </View>
                         </View>
                       </View>
                       {index < rewards.length - 1 && <Divider style={styles.rewardDivider} />}
@@ -397,25 +342,8 @@ const CreateRewardScreen: React.FC = () => {
         </View>
       </ScrollView>
 
-      {/* Dialog de exclusão */}
+      {/* Dialog de rejeição */}
       <Portal>
-        <Dialog visible={deleteDialogVisible} onDismiss={() => setDeleteDialogVisible(false)}>
-          <Dialog.Title>Excluir Recompensa</Dialog.Title>
-          <Dialog.Content>
-            <Text>Tem certeza que deseja excluir a recompensa "{deletingReward?.name}"?</Text>
-            <Text style={{ fontSize: 13, color: COLORS.common.textLight, marginTop: 10 }}>
-              Esta ação não pode ser desfeita.
-            </Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setDeleteDialogVisible(false)}>Cancelar</Button>
-            <Button onPress={handleDeleteReward} textColor={COLORS.common.error}>
-              Excluir
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-
-        {/* Dialog de rejeição */}
         <Dialog visible={rejectDialogVisible} onDismiss={() => setRejectDialogVisible(false)}>
           <Dialog.Title>Rejeitar Resgate</Dialog.Title>
           <Dialog.Content>
@@ -495,20 +423,27 @@ const styles = StyleSheet.create({
   },
   rewardHeader: {
     flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 16,
+  },
+  rewardIconLarge: {
+    width: 56,
+    height: 56,
+    borderRadius: 14,
+    backgroundColor: COLORS.parent.primary,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
+    marginRight: 16,
   },
-  rewardIconContainer: {
-    marginRight: 8,
-  },
-  rewardHeaderText: {
+  rewardContent: {
     flex: 1,
+    marginRight: 12,
   },
   rewardName: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
     color: COLORS.common.text,
-    lineHeight: 24,
+    marginBottom: 4,
   },
   rewardNameInactive: {
     color: COLORS.common.textLight,
@@ -518,58 +453,42 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: COLORS.common.textLight,
     lineHeight: 20,
-    marginBottom: 12,
-    paddingLeft: 48,
   },
-  rewardCostContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.parent.background,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    marginBottom: 16,
+  statusIndicator: {
+    width: 14,
+    height: 14,
+    borderRadius: 7,
   },
-  rewardCostLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: COLORS.common.textLight,
-    marginRight: 8,
+  statusIndicatorActive: {
+    backgroundColor: COLORS.child.success,
   },
-  rewardCost: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: COLORS.parent.primary,
+  statusIndicatorInactive: {
+    backgroundColor: COLORS.common.textLight,
   },
-  rewardActions: {
+  rewardBottomRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  rewardToggle: {
+  costContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    flex: 1,
+  },
+  costIcon: {
+    fontSize: 18,
+    marginRight: 6,
+  },
+  costText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: COLORS.common.text,
   },
   switchContainer: {
     transform: [{ scale: 1.25 }],
   },
-  statusText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  statusActive: {
-    color: COLORS.child.success,
-  },
-  statusInactive: {
-    color: COLORS.common.textLight,
-  },
-  deleteButton: {
-    margin: 0,
-    marginTop: 4,
-  },
   rewardDivider: {
-    marginVertical: 8,
+    marginVertical: 4,
   },
   redemptionItem: {
     paddingVertical: 12,
